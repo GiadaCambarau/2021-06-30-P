@@ -1,8 +1,10 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.genes.model.Arco;
 import it.polito.tdp.genes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,19 +29,33 @@ public class FXMLController {
     private Button btnRicerca;
 
     @FXML
-    private ComboBox<?> boxLocalizzazione;
+    private ComboBox<String> boxLocalizzazione;
 
     @FXML
     private TextArea txtResult;
 
     @FXML
     void doRicerca(ActionEvent event) {
-
+    	if (boxLocalizzazione.getValue()!= null) {
+    		String loc = boxLocalizzazione.getValue();
+    		txtResult.appendText("Il percorso migliore è: "+"\n");
+    		List<String> result = model.trovaPercorso(loc);
+    		for (String l: result) {
+    			txtResult.appendText(l+ "\n");
+    		}
+    	}
     }
 
     @FXML
     void doStatistiche(ActionEvent event) {
-
+    	if (boxLocalizzazione.getValue()!= null) {
+    		String loc = boxLocalizzazione.getValue();
+    		List<Arco> adiacenti = model.getAdiacenti(loc);
+    		txtResult.appendText("adiacenti a "+loc+ ": "+"\n");
+    		for (Arco a : adiacenti) {
+    			txtResult.appendText(a+"\n");
+    		}
+    	}
     }
 
     @FXML
@@ -53,5 +69,9 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		model.creaGrafo();
+		txtResult.appendText("Vertici: "+model.getV()+"\n");
+		txtResult.appendText("Archi: "+ model.getA()+"\n");
+		boxLocalizzazione.getItems().addAll(model.getVertici());
 	}
 }
